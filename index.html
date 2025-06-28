@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Image Sequence 2 MP4 Converter</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="title-bar">
+    <div class="title">Image Sequence 2 MP4 Converter</div>
+    <div class="window-controls">
+      <button id="minimize">−</button>
+      <button id="maximize">□</button>
+      <button id="close">×</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <button id="select-files-btn">Select Image Sequence Files</button>
+    <p id="files-selected">No files selected</p>
+
+    <button id="select-output-btn">Select Output MP4 Location</button>
+    <p id="output-path">No output selected</p>
+
+    <input type="number" id="framerate" placeholder="Framerate" value="30">
+
+    <button id="convert-btn">Convert</button>
+    <p id="status"></p>
+
+    <div class="progress-container">
+      <div id="progress-bar"></div>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

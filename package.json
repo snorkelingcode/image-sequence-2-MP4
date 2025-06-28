@@ -1,0 +1,28 @@
+{
+  "name": "s2mp4-desktop-app",
+  "version": "1.0.0",
+  "description": "Convert image sequences to MP4 with a desktop GUI",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder"
+  },
+  "build": {
+    "appId": "com.yourname.s2mp4",
+    "productName": "S2MP4",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": "portable",
+      "icon": "public/icon.png"
+    }
+  },
+  "devDependencies": {
+    "electron": "^29.0.0",
+    "electron-builder": "^24.6.4"
+  },
+  "dependencies": {
+    "sharp": "^0.34.2"
+  }
+}

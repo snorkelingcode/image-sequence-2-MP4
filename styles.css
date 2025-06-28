@@ -1,0 +1,117 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+body {
+  background-color: #f5f7fa;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.title-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e1e4e8;
+  -webkit-app-region: drag;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.title {
+  font-weight: 600;
+  font-size: 18px;
+  color: #1a73e8;
+}
+
+.window-controls {
+  display: flex;
+  gap: 8px;
+  -webkit-app-region: no-drag;
+}
+
+.window-controls button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.window-controls button:hover {
+  background-color: #f1f1f1;
+}
+
+#close:hover {
+  background-color: #ff5252;
+  color: white;
+}
+
+.container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  gap: 16px;
+}
+
+.container input[type="number"] {
+  width: 80%;
+  max-width: 400px;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.container button {
+  background-color: #1a73e8;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.container button:hover {
+  background-color: #1669c1;
+}
+
+#status {
+  font-size: 14px;
+  color: #333;
+  text-align: center;
+  max-width: 400px;
+  word-wrap: break-word;
+}
+
+.progress-container {
+  width: 80%;
+  max-width: 400px;
+  height: 20px;
+  background-color: #ddd;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+#progress-bar {
+  width: 0%;
+  height: 100%;
+  background-color: #1a73e8;
+  transition: width 0.2s;
+}

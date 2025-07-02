@@ -26,11 +26,14 @@ function createWindow() {
   });
   ipcMain.on('close-window', () => mainWindow.close());
 
-  // Select PNG files
+  // Select any image files
   ipcMain.handle('select-files', async () => {
     const result = await dialog.showOpenDialog(mainWindow, {
       properties: ['openFile', 'multiSelections'],
-      filters: [{ name: 'PNG Images', extensions: ['png'] }]
+      filters: [
+        { name: 'Image Files', extensions: ['png', 'jpg', 'jpeg', 'bmp', 'webp', 'tiff'] },
+        { name: 'All Files', extensions: ['*'] }
+      ]
     });
     return result.canceled ? null : result.filePaths;
   });
@@ -46,13 +49,13 @@ function createWindow() {
   // Enhanced image preprocessing
   async function preprocessImages(files, tempDir) {
     const processedFiles = [];
-    
+
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       const outputPath = path.join(tempDir, `processed_${String(i + 1).padStart(4, '0')}.png`);
-      
+
       try {
-        await sharp(file.path)
+        await sharp(file)
           .png({
             compressionLevel: 0,  // no compression for max quality
             adaptiveFiltering: false,
@@ -60,22 +63,19 @@ function createWindow() {
           })
           .sharpen(0.5, 1, 2)     // subtle sharpening for edges
           .toFile(outputPath);
-          
-        processedFiles.push({
-          path: outputPath,
-          num: i + 1
-        });
-        
+
+        processedFiles.push(outputPath);
+
         // Update progress
         const percent = Math.round((i / files.length) * 30); // 30% for preprocessing
         mainWindow.webContents.send('conversion-progress', percent);
-        
+
       } catch (error) {
-        console.error(`Error processing ${file.path}:`, error);
+        console.error(`Error processing ${file}:`, error);
         throw error;
       }
     }
-    
+
     return processedFiles;
   }
 
@@ -83,16 +83,8 @@ function createWindow() {
   ipcMain.on('convert-video', async (event, args) => {
     const { selectedFiles, outputFile, framerate } = args;
 
-    const sortedFiles = selectedFiles
-      .map(file => ({
-        path: file,
-        num: parseInt(path.basename(file).match(/^(\d{4})\.png$/)?.[1] || -1)
-      }))
-      .filter(f => f.num >= 0)
-      .sort((a, b) => a.num - b.num);
-
-    if (sortedFiles.length === 0) {
-      event.reply('conversion-result', "No valid Blender-style images found (e.g. 0001.png).");
+    if (!selectedFiles || selectedFiles.length === 0) {
+      event.reply('conversion-result', "No files selected.");
       return;
     }
 
@@ -103,10 +95,10 @@ function createWindow() {
     try {
       console.log("Preprocessing images for cleaner edges...");
       mainWindow.webContents.send('conversion-progress', 0);
-      
+
       // Preprocess images with Sharp
-      const processedFiles = await preprocessImages(sortedFiles, tempDir);
-      
+      const processedFiles = await preprocessImages(selectedFiles, tempDir);
+
       const inputPattern = path.join(tempDir, 'processed_%04d.png');
       const totalFrames = processedFiles.length;
       const finalOutput = outputFile.replace(/\.(mov|mp4)$/i, '.mp4');
@@ -120,7 +112,7 @@ function createWindow() {
         '-i', inputPattern,
         '-c:v', 'libx264',
         '-crf', '10',              // very high quality (lower = better)
-        '-preset', 'slow',         
+        '-preset', 'slow',
         '-pix_fmt', 'yuv420p',     // universal compatibility
         '-profile:v', 'high',      // widely supported
         '-level', '4.1',           // ensures compatibility
@@ -149,7 +141,7 @@ function createWindow() {
       ffmpeg.on('close', (code) => {
         // Clean up temp directory
         fs.rmSync(tempDir, { recursive: true, force: true });
-        
+
         if (code === 0) {
           mainWindow.webContents.send('conversion-result', `High-quality conversion complete: ${finalOutput}`);
         } else {
